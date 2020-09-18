@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description import data of seo from server
 # @created 2020-04-06T16:13:38.976Z+08:00
-# @last-modified 2020-07-16T09:25:45.739Z+08:00
+# @last-modified 2020-09-18T17:16:48.431Z+08:00
 #
 import os
 import re
@@ -21,12 +21,12 @@ def import_seo_share_info(date_ = None):
     import ding sheng's purchase infomation
     """
     _file_path = os.path.join(SERVER_ROOT, '11 运营管理', '大岩定晟认购申赎情况.xlsx')
-    df = pd.read_excel(_file_path, encoding='gbk')
+    df = pd.read_excel(_file_path)
     if not date_ is None:
         assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
         df = df.loc[df['purchase_date']>=int(date_), :]
     if not df.empty:
-        ATTDB.upsert('public.seo_purchase_detail', df, keys_=['purchase_date', 'name','product_id'])
+        ATTDB.upsert('public.seo_purchase_detail', df, keys_=['purchase_date','name','shares','product_id'])
 
 
 def import_in_project(date_ = None):
@@ -56,7 +56,8 @@ def import_in_project(date_ = None):
         '是否期权': 'is_option'
     }
     _file_path = os.path.join(SERVER_ROOT, '11 运营管理', '参与项目汇总.xlsx')
-    df = pd.read_excel(_file_path, encoding='gbk').fillna(0)
+    df = pd.read_excel(_file_path).fillna(0)
+    df = df.loc[:, col_dict.keys()]
     df.rename(columns=col_dict, inplace=True)
     if not date_ is None:
         assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
@@ -75,7 +76,7 @@ def import_project_sub_info(date_ = None):
         '最低一份金额(亿元)': 'min_purchase_amount',        
     }
     _file_path = os.path.join(SERVER_ROOT, '定增项目追踪.xlsx')
-    df = pd.read_excel(_file_path, sheet_name='定增筛选' ,encoding='gbk')
+    df = pd.read_excel(_file_path, sheet_name='定增筛选')
     df.rename(columns=col_dict, inplace=True)
     df = df.loc[~(pd.to_numeric(df['estimated_sub_date'], errors='coerce').isna()),['symbol','name','estimated_sub_date','min_purchase_amount']]
     if not date_ is None:
@@ -89,7 +90,7 @@ def import_project_sub_info(date_ = None):
     pass
 
 if __name__ == "__main__":
-    # import_seo_share_info()
-    import_in_project()
+    import_seo_share_info()
+    # import_in_project()
     # import_project_sub_info()
     pass
