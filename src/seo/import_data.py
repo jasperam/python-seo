@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description import data of seo from server
 # @created 2020-04-06T16:13:38.976Z+08:00
-# @last-modified 2020-09-18T17:16:48.431Z+08:00
+# @last-modified 2020-11-26T09:46:21.337Z+08:00
 #
 import os
 import re
@@ -78,7 +78,7 @@ def import_project_sub_info(date_ = None):
     _file_path = os.path.join(SERVER_ROOT, '定增项目追踪.xlsx')
     df = pd.read_excel(_file_path, sheet_name='定增筛选')
     df.rename(columns=col_dict, inplace=True)
-    df = df.loc[~(pd.to_numeric(df['estimated_sub_date'], errors='coerce').isna()),['symbol','name','estimated_sub_date','min_purchase_amount']]
+    df = df.loc[not (pd.to_numeric(df['estimated_sub_date'], errors='coerce').isna()),['symbol','name','estimated_sub_date','min_purchase_amount']]
     if not date_ is None:
         assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
         df = df.loc[df['estimated_sub_date']>=int(date_), :]
@@ -90,7 +90,7 @@ def import_project_sub_info(date_ = None):
     pass
 
 if __name__ == "__main__":
-    import_seo_share_info()
-    # import_in_project()
+    # import_seo_share_info()
+    import_in_project()
     # import_project_sub_info()
     pass
