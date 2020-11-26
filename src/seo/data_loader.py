@@ -41,7 +41,7 @@ def check_project(start_dt='20200401'):
 
     # 检查未跟踪项目
     sql = f"""
-        select b.S_INFO_NAME+'_'+left(a.S_INFO_WINDCODE,6) as symbol
+        select b.S_INFO_NAME+'_'+left(a.S_INFO_WINDCODE,6) as symbol, LEADUNDERWRITER as writer
         from ASHARESEO a, ASHAREDESCRIPTION b
         where a.S_FELLOW_PROGRESS='5'
         and a.S_FELLOW_APPROVEDDATE>='{start_dt}'
@@ -55,9 +55,15 @@ def check_project(start_dt='20200401'):
     df = w_db.read(sql)
     all_project = futils.get_current_folder_dirs(os.path.join(root, '00 项目资料'))
 
-    for _d in df.symbol:
-        if not _d in all_project:
-            log.info(f'Not tracked project {_d}')
+    p_name, p_writer = list(), list()
+    for i in df.index:
+        if not df.loc[i, 'symbol'] in all_project:
+            p_name.append(df.loc[i, 'symbol'][:-7])
+            p_writer.append(df.loc[i, 'writer'])
+            log.info(f"Not tracked project {df.loc[i, 'symbol']}, main writer {df.loc[i, 'writer']}")
+    print(p_name)
+    print(p_writer)
+
  
 if __name__ == "__main__":
    check_project()

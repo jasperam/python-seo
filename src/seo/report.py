@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description SEO risk report
 # @created 2020-05-26T14:19:21.122Z+08:00
-# @last-modified 2020-07-16T17:52:03.485Z+08:00
+# @last-modified 2020-11-26T13:56:50.506Z+08:00
 #
 import os
 import docx
@@ -26,7 +26,9 @@ def make_intent_letter(broker, project):
     """
     ret = w_db.read(sql)
 
-    for _pro in project:
+    for i in range(len(project)):
+        _pro = project[i]
+        _broker = broker[i]  
         _doc = docx.Document(os.path.join(root_path, u'30 合作券商/认购意向函.docx'))
         for _p in _doc.paragraphs:
             if ('【】' in _p.text) or ('broker' in _p.text) or (u'x月y日' in _p.text):
@@ -34,7 +36,7 @@ def make_intent_letter(broker, project):
                     if ('【】' in _r.text):
                         _r.text = _r.text.replace('【】', _pro)
                     if ('broker' in _r.text):
-                        _r.text = _r.text.replace('broker', broker)
+                        _r.text = _r.text.replace('broker', _broker)
                     if ('x' in _r.text):
                         _r.text = _r.text.replace(u'x', _month)
                     if ('y' in _r.text):
@@ -51,7 +53,7 @@ def make_intent_letter(broker, project):
 
 if __name__ == "__main__":    
     project = [u'新疆天业']
-    broker = u'申万宏源证券承销保荐有限责任公司'
+    broker = [u'申万宏源证券承销保荐有限责任公司']
     make_intent_letter(broker, project)
 
 
