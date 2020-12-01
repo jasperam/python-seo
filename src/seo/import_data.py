@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description import data of seo from server
 # @created 2020-04-06T16:13:38.976Z+08:00
-# @last-modified 2020-12-01T10:39:28.015Z+08:00
+# @last-modified 2020-12-01T10:46:58.438Z+08:00
 #
 import os
 import re
@@ -21,7 +21,7 @@ def import_seo_share_info(date_ = None):
     import ding sheng's purchase infomation
     """
     _file_path = os.path.join(SERVER_ROOT, '11 运营管理', '大岩定晟认购申赎情况.xlsx')
-    df = pd.read_excel(_file_path, usecols=['purchase_date','redeem_date','name','shares','netvalue','amount','product_id','product_name'])
+    df = pd.read_excel(_file_path, usecols=['purchase_date','redeem_date','name','shares','netvalue','amount','product_id','product_name','status']).fillna('')
     if not date_ is None:
         assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
         df = df.loc[df['purchase_date']>=int(date_), :]
