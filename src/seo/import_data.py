@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description import data of seo from server
 # @created 2020-04-06T16:13:38.976Z+08:00
-# @last-modified 2020-12-08T14:45:46.112Z+08:00
+# @last-modified 2021-02-08T14:32:19.388Z+08:00
 #
 import os
 import re
@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from jt.utils.db import PgSQLLoader
+from jt.invest.constants import futils
 
 ATTDB = PgSQLLoader('attribution')
 SERVER_ROOT = r'\\192.168.1.75\定增2.0'
@@ -20,13 +21,19 @@ def import_seo_share_info(date_ = None):
     """
     import ding sheng's purchase infomation
     """
-    _file_path = os.path.join(SERVER_ROOT, '11 运营管理', '大岩定晟认购申赎情况.xlsx')
-    df = pd.read_excel(_file_path, usecols=['purchase_date','redeem_date','name','shares','netvalue','amount','product_id','product_name','status']).fillna('')
-    if not date_ is None:
-        assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
-        df = df.loc[df['purchase_date']>=int(date_), :]
-    if not df.empty:
-        ATTDB.upsert('public.seo_purchase_detail', df, keys_=['purchase_date','name','shares','product_id'])
+    # file_list = ['大岩定晟认购申赎情况.xlsx', '大岩岩享认购申赎情况.xlsx']
+    file_list = futils.get_current_folder_files(os.path.join(SERVER_ROOT, '11 运营管理'))
+    for file_name in file_list:
+        if '认购申赎情况' in file_name:
+            print(f'导入认购文件：{file_name}')
+            _file_path = os.path.join(SERVER_ROOT, '11 运营管理', file_name)
+            df = pd.read_excel(_file_path, usecols=['purchase_date','redeem_date','name','shares','netvalue','amount','product_id','product_name','status'])
+            df = df.dropna(subset=['product_id']).fillna('')
+            if not date_ is None:
+                assert re.match(DATE_STR_PATTERN, date_), 'date_ should be like "yyyymmdd"!' 
+                df = df.loc[df['purchase_date']>=int(date_), :]
+            if not df.empty:
+                ATTDB.upsert('public.seo_purchase_detail', df, keys_=['purchase_date','name','shares','product_id'])
 
 
 def import_in_project(date_ = None):
@@ -56,6 +63,7 @@ def import_in_project(date_ = None):
         '是否期权': 'is_option',
         '卖出价格': 'sell_price',
         '实际盈亏': 'real_pnl',
+        '实际使用本金': 'real_used_capital',
     }
     _file_path = os.path.join(SERVER_ROOT, '11 运营管理', '参与项目汇总.xlsx')
     df = pd.read_excel(_file_path).fillna(0)
@@ -93,6 +101,6 @@ def import_project_sub_info(date_ = None):
 
 if __name__ == "__main__":
     # import_seo_share_info()
-    import_in_project()
+    # import_in_project()
     # import_project_sub_info()
     pass
