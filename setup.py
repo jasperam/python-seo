@@ -7,7 +7,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='seo',
-    version='0.0.5',
+    version='0.1.0',
     description="seo workflow",
     author='Neo',
     author_email='neo.lin@jaspercapital.com',

@@ -1,9 +1,11 @@
 import os
+
 from jt.invest.constants import w_db, futils
 from jt.utils.misc.log import Logger
 
+from seo.constants import root
+
 log = Logger()
-root = r'\\192.168.1.75\定增2.0'
 
 def check_project(start_dt='20200401'):
     # 检查已完成项目是否已经归档
@@ -61,11 +63,12 @@ def check_project(start_dt='20200401'):
             p_name.append(df.loc[i, 'symbol'][:-7])
             p_writer.append(df.loc[i, 'writer'])
             log.info(f"Not tracked project {df.loc[i, 'symbol']}, main writer {df.loc[i, 'writer']}")
-    print(p_name)
-    print(p_writer)
+    log.info(p_name)
+    log.info(p_writer)
+    return p_name, p_writer
 
  
 if __name__ == "__main__":
-   check_project()
+   check_project('20210223')
 
     
