@@ -1,4 +1,4 @@
-call activate env_37
+call activate py_37
 
 python setup.py bdist_wheel --universal
 

@@ -3,7 +3,7 @@
 # @author Neo Lin
 # @description import data of seo from server
 # @created 2020-04-06T16:13:38.976Z+08:00
-# @last-modified 2021-03-23T13:25:11.232Z+08:00
+# @last-modified 2021-04-27T17:31:09.001Z+08:00
 #
 import os
 import re
@@ -55,10 +55,12 @@ def import_in_project(date_ = None):
         '状态': 's_status',
         '修改日期': 'update_date',
         '备注': 'remarks',
-        '是否期权': 'is_option',
+        '是否场外': 'is_otc',
         '卖出价格': 'sell_price',
         '实际盈亏': 'real_pnl',
         '实际使用本金': 'real_used_capital',
+        '是否两融': 'is_margin',
+        '场外通道': 'otc_channel'
     }
     _file_path = os.path.join(root, '11 运营管理', '参与项目汇总.xlsx')
     df = pd.read_excel(_file_path).fillna(0)
@@ -95,7 +97,7 @@ def import_project_sub_info(date_ = None):
     pass
 
 if __name__ == "__main__":
-    import_seo_share_info()
+    # import_seo_share_info()
     import_in_project()
     # import_project_sub_info()
     pass
